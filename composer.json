@@ -1,0 +1,19 @@
+{
+    "name": "vadym_pintia/admit-test",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Vadym Pintia",
+            "email": "vadimpintya@gmail.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "symfony/dotenv": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
