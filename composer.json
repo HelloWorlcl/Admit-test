@@ -9,6 +9,7 @@
     ],
     "require": {},
     "require-dev": {
+        "php": "^7.1.0",
         "symfony/dotenv": "^4.2"
     },
     "autoload": {
