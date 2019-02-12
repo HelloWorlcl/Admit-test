@@ -30,21 +30,6 @@ abstract class AbstractRepository
      */
     abstract public function findById(int $id);
 
-//    public function save(AbstractModel $model)
-//    {
-//
-//    }
-//
-//    public function update(AbstractModel $model)
-//    {
-//
-//    }
-//
-//    public function delete(AbstractModel $model)
-//    {
-//
-//    }
-
     public function __destruct()
     {
         $this->connection = null;
