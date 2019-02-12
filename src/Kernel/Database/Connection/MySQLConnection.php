@@ -2,8 +2,6 @@
 
 namespace App\Kernel\Database\Connection;
 
-use Symfony\Component\Dotenv\Dotenv;
-
 class MySQLConnection implements Connection
 {
     /**
@@ -33,10 +31,6 @@ class MySQLConnection implements Connection
 
     public function __construct()
     {
-        //TODO: move this using to more appropriate place
-        $dotenv = new Dotenv();
-        $dotenv->load('./../.env');
-
         $this->host = getenv('DB_HOST');
         $this->post = getenv('DB_PORT');
         $this->dbName = getenv('DB_NAME');
