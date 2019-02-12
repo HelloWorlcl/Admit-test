@@ -42,9 +42,37 @@ class Router
     public function __construct()
     {
         $this->routes = require_once('routes.php');
+        $this->setRequestUri()
+            ->setRequestMethod()
+            ->setRequestQueryString();
+    }
+
+    private function setRequestUri(): Router
+    {
         $this->requestUri = $_SERVER['REQUEST_URI'];
-        $this->requestMethod = $_SERVER['REQUEST_METHOD'];
+
+        return $this;
+    }
+
+    private function setRequestMethod(): Router
+    {
+        $this->requestMethod = $this->isFileWithCustomMethodSent()
+            ? $_POST['_method']
+            : $this->requestMethod = $_SERVER['REQUEST_METHOD'];
+
+        return $this;
+    }
+
+    private function isFileWithCustomMethodSent(): bool
+    {
+        return !empty($_FILES) && !empty($_POST['_method']);
+    }
+
+    private function setRequestQueryString(): Router
+    {
         $this->requestQueryString = $_SERVER['QUERY_STRING'];
+
+        return $this;
     }
 
     /**
@@ -98,15 +126,26 @@ class Router
 
     private function getControllerArgs(): array
     {
-        if ($this->requestMethod === self::HTTP_METHOD_GET || $this->requestMethod === self::HTTP_METHOD_DELETE) {
-            $params = !empty($this->requestQueryString)
-                ? explode('&', $this->requestQueryString)
-                : [];
-
-            return $this->buildArgsArray($params);
+        switch (true) {
+            case $this->isMethodWithQueryString():
+                return $this->buildArgsArray($this->getQueryStringParams());
+            case !empty($_FILES):
+                return $_POST;
+            default:
+                return json_decode(file_get_contents('php://input'), true);
         }
+    }
 
-        return json_decode(file_get_contents('php://input'), true);
+    private function isMethodWithQueryString(): bool
+    {
+        return $this->requestMethod === self::HTTP_METHOD_GET || $this->requestMethod === self::HTTP_METHOD_DELETE;
+    }
+
+    private function getQueryStringParams(): array
+    {
+        return !empty($this->requestQueryString)
+            ? explode('&', $this->requestQueryString)
+            : [];
     }
 
     private function buildArgsArray(array $params): array

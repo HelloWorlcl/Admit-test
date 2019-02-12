@@ -6,9 +6,11 @@ use App\Models\Book;
 use App\Models\Factories\BookFactory;
 use App\Models\Factories\ModelFactory;
 use App\Repositories\BookRepository;
+use App\Service\Files\FileHandler;
+use App\Service\Files\ImageHandler;
 use http\Exception\BadQueryStringException;
 
-class BookController extends AbstractController
+class BookController
 {
     /**
      * @var BookRepository
@@ -52,13 +54,25 @@ class BookController extends AbstractController
 
     public function new(array $params): Book
     {
+        if (!empty($_FILES)) {
+            $params['bookPicturePath'] = $this->uploadFileAndReturnPath(
+                new ImageHandler($_FILES['bookFile'])
+            );
+        }
+
         $book = $this->factory->createFromArray($params);
 
         return $this->repository->save($book);
     }
 
-    public function updatePut(array $params): Book
+    public function updatePATCH(array $params): Book
     {
+        if (!empty($_FILES)) {
+            $params['bookPicturePath'] = $this->uploadFileAndReturnPath(
+                new ImageHandler($_FILES['bookFile'])
+            );
+        }
+
         $book = $this->factory->createFromArray($params);
 
         return $this->repository->update($book);
@@ -73,5 +87,11 @@ class BookController extends AbstractController
         }
 
         throw new BadQueryStringException('Supplied query parameter is not supported');
+    }
+
+    private function uploadFileAndReturnPath(FileHandler $fileHandler): string
+    {
+        $fileHandler->upload();
+        return $fileHandler->getUploadedFilePath();
     }
 }
