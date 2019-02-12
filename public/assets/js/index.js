@@ -44,7 +44,29 @@ function addBookToList(data) {
         li.appendChild(deleteButton);
 
         mainList.appendChild(li);
+
+        deleteButton.addEventListener('click', (event) => {
+            deleteBook(event);
+        });
     });
+}
+
+function deleteBook(event) {
+    const bookId = event.target.dataset.index;
+
+    axios.delete('/books?id=' + bookId)
+        .then(response => {
+            if (response.status === 204) {
+                removeBookFromList(bookId);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        })
+}
+
+function removeBookFromList(bookId) {
+    document.querySelector('#book-' + bookId).remove();
 }
 
 axios.get('/books')
