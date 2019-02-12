@@ -46,18 +46,14 @@ class BookFactory implements ModelFactory
         return $book;
     }
 
-    private function createAuthorFromArray(int $authorId, string $authorName = null): Author
+    private function createAuthorFromArray(int $authorId, string $authorFullName = null): Author
     {
-        if (!$authorName) {
-            $authorRepository = new AuthorRepository();
+        $authorFactory = new AuthorFactory();
 
-            return $authorRepository->findById($authorId);
-        }
-
-        $author = new Author($authorName);
-        $author->setId($authorId);
-
-        return $author;
+        return $authorFactory->createFromArray([
+            'authorId' => $authorId,
+            'authorFullName' => $authorFullName
+        ]);
     }
 
     private function createSingleFromArray(array $bookArray): Book

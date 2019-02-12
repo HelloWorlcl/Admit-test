@@ -3,6 +3,7 @@
 namespace App\Models\Factories;
 
 use App\Models\Author;
+use App\Repositories\AuthorRepository;
 
 class AuthorFactory implements ModelFactory
 {
@@ -34,6 +35,12 @@ class AuthorFactory implements ModelFactory
 
     private function setAuthorObject(array $authorArray): Author
     {
+        if (!$authorArray['authorFullName']) {
+            $authorRepository = new AuthorRepository();
+
+            return $authorRepository->findById($authorArray['authorId']);
+        }
+
         $author = new Author($authorArray['authorFullName']);
         $author->setId($authorArray['authorId']);
 
