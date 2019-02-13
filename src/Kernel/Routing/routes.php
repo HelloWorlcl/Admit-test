@@ -1,6 +1,6 @@
 <?php
 
 return [
-    '/authors' => \App\Controllers\AuthorController::class,
-    '/books' => \App\Controllers\BookController::class
+    '/api/authors' => \App\Controllers\AuthorController::class,
+    '/api/books' => \App\Controllers\BookController::class
 ];
