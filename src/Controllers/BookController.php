@@ -41,15 +41,16 @@ class BookController
      */
     public function show(array $params)
     {
-        if (isset($params['limit']) && isset($params['offset'])) {
-            return $this->repository->findAllWithLimitAndOffset($params['limit'], $params['offset']);
+        switch (true) {
+            case isset($params['limit']) && isset($params['offset']):
+                return $this->repository->findAllWithLimitAndOffset($params['limit'], $params['offset']);
+            case !empty($params['id']):
+                return $this->repository->findById($params['id']);
+            case key_exists('totalCount', $params):
+                return ['totalCount' => $this->repository->getTotalBooksCount()];
+            default:
+                throw new BadQueryStringException('Supplied query parameter is not supported');
         }
-
-        if (!empty($params['id'])) {
-            return $this->repository->findById($params['id']);
-        }
-
-        throw new BadQueryStringException('Supplied query parameter is not supported');
     }
 
     public function new(array $params): Book

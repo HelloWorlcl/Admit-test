@@ -81,7 +81,9 @@ class BookRepository extends AbstractRepository
         $statement->bindParam(':offset', $offset, \PDO::PARAM_INT);
         $statement->execute();
 
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $this->factory->createFromArray($result);
     }
 
     public function save(Book $book): Book
@@ -140,5 +142,15 @@ class BookRepository extends AbstractRepository
         if (!$statement->execute()) {
             throw new ModelWasNotDeletedException('Unable to delete the book with id = ' . $id);
         }
+    }
+
+    public function getTotalBooksCount()
+    {
+        $statement = $this->getConnection()->prepare(
+            'SELECT COUNT(id) FROM books'
+        );
+        $statement->execute();
+
+        return $statement->fetch(\PDO::FETCH_COLUMN);
     }
 }
