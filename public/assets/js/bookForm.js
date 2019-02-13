@@ -19,7 +19,7 @@ function sendBook() {
     const book = {};
     const options = {
         method: fileInput.value ? 'POST': 'PATCH',
-        url: '/books',
+        url: '/api/books',
         data: fileInput.value ? formData : book
     };
 
@@ -64,19 +64,19 @@ function addAuthorsToSelect(authors) {
 
 
 (function getAuthors() {
-    axios.get('/authors')
+    axios.get('/api/authors')
         .then(response => {
             addAuthorsToSelect(response.data);
         })
         .catch(error => {
-            console.log(error);
+            console.error(error);
         });
 })();
 
 if (bookId) {
     const bookId = urlParams.get('id');
 
-    axios.get('/books?id=' + bookId)
+    axios.get('/api/books?id=' + bookId)
         .then(response => {
             fillInputsWithBookData(response.data);
         })
