@@ -1,10 +1,11 @@
+const BOOKS_DEFAULT_URL = 'api/books';
 const DEFAULT_LIMIT = 10;
 const mainList = document.querySelector('#book-list');
 const pagination = new Pagination(document.querySelector('#pagination'), DEFAULT_LIMIT);
 let books = {};
 
 function getTotalBooksCount() {
-    axios.get('/api/books?totalCount')
+    axios.get(BOOKS_DEFAULT_URL + '?totalCount')
         .then(response => {
             pagination.setTotalCount(response.data.totalCount);
             pagination.createPagination();
@@ -21,7 +22,7 @@ function getBooksWithLimitAndOffset(limit, offset = 0) {
         return;
     }
 
-    axios.get(`/api/books?limit=${limit}&offset=${offset}`)
+    axios.get(`${BOOKS_DEFAULT_URL}?limit=${limit}&offset=${offset}`)
         .then(response => {
             books[limit] = books[limit] || {};
             books[limit][offset] = [...response.data];
@@ -36,66 +37,112 @@ function getBooksWithLimitAndOffset(limit, offset = 0) {
 function buildBooksList(books) {
     mainList.innerHTML = '';
 
-    books.forEach(book => {
-        const li = document.createElement('li');
-        li.id = 'book-' + book.id;
-        li.className = 'list-group-item';
+    books.forEach(book => createBookListElement(book));
+}
 
-        const title = document.createElement('h3');
-        const description = document.createElement('p');
-        const authorInfo = document.createElement('p');
-        const editButton = document.createElement('a');
-        const deleteButton = document.createElement('button');
-        let image = null;
+function createBookListElement(book) {
+    const li = createListElement(book.id);
+    const image = createBookImage(book.picturePath);
 
-        title.className = 'row justify-content-md-center';
-        title.innerText = book.name;
+    li.appendChild(createBookTitle(book.name));
+    if (image) {
+        li.appendChild(image);
+    }
+    li.appendChild(createBookDescription(book.description));
+    li.appendChild(createAuthorInfo(book.author.fullName));
+    li.appendChild(createButtons(book.id));
 
-        description.className = 'row justify-content-md-center';
-        description.innerText = book.description;
+    mainList.appendChild(li);
+}
 
-        authorInfo.className = 'row justify-content-md-end';
-        authorInfo.innerText = book.author.fullName;
+function createListElement(bookId) {
+    const li = document.createElement('li');
 
-        if (book.picturePath) {
-            image = document.createElement('img');
-            image.className = 'img-fluid';
-            image.src = book.picturePath;
-        }
+    li.id = 'book-' + bookId;
+    li.className = 'list-group-item';
 
-        editButton.className = 'edit-book btn btn-warning';
-        editButton.href = 'book-form.html?id=' + book.id;
-        editButton.innerText = 'Edit';
-        editButton.dataset.index = book.id;
+    return li;
+}
 
-        deleteButton.className = 'delete-book btn btn-danger';
-        deleteButton.innerText = 'Delete';
-        deleteButton.dataset.index = book.id;
+function createBookTitle(bookTitle) {
+    const title = document.createElement('h3');
 
-        li.appendChild(title);
+    title.className = 'row justify-content-md-center';
+    title.innerText = bookTitle;
 
-        if (image) {
-            li.appendChild(image);
-        }
+    return title;
+}
 
-        li.appendChild(description);
-        li.appendChild(authorInfo);
+function createBookImage(bookPicturePath) {
+    let image = null;
 
-        li.appendChild(editButton);
-        li.appendChild(deleteButton);
+    if (bookPicturePath) {
+        image = document.createElement('img');
+        image.className = 'img-fluid';
+        image.src = bookPicturePath;
+    }
 
-        mainList.appendChild(li);
+    return image;
+}
 
-        deleteButton.addEventListener('click', (event) => {
-            deleteBook(event);
-        });
+function createBookDescription(bookDescription) {
+    const description = document.createElement('p');
+
+    description.className = 'row justify-content-md-center mt-2';
+    description.innerText = bookDescription;
+
+    return description;
+}
+
+function createAuthorInfo(authorFullName) {
+    const authorInfo = document.createElement('h4');
+
+    authorInfo.className = 'row justify-content-md-center';
+    authorInfo.innerText = authorFullName;
+
+    return authorInfo;
+}
+
+function createButtons(bookId) {
+    const buttonsBlock = document.createElement('div');
+
+    buttonsBlock.className = 'row justify-content-md-end';
+
+    buttonsBlock.appendChild(createEditButton(bookId));
+    buttonsBlock.appendChild(createDeleteButton(bookId));
+
+    return buttonsBlock;
+}
+
+function createEditButton(bookId) {
+    const editButton = document.createElement('a');
+
+    editButton.className = 'edit-book btn btn-warning mr-3';
+    editButton.href = 'book-form.html?id=' + bookId;
+    editButton.innerText = 'Edit';
+    editButton.dataset.index = bookId;
+
+    return editButton;
+}
+
+function createDeleteButton(bookId) {
+    const deleteButton = document.createElement('button');
+
+    deleteButton.className = 'delete-book btn btn-danger mr-3';
+    deleteButton.innerText = 'Delete';
+    deleteButton.dataset.index = bookId;
+
+    deleteButton.addEventListener('click', (event) => {
+        deleteBook(event);
     });
+
+    return deleteButton;
 }
 
 function deleteBook(event) {
     const bookId = event.target.dataset.index;
 
-    axios.delete('/api/books?id=' + bookId)
+    axios.delete(`${BOOKS_DEFAULT_URL}?id=${bookId}`)
         .then(response => {
             if (response.status === 204) {
                 removeBookFromList(bookId);

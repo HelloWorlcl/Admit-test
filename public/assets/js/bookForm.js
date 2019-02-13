@@ -1,3 +1,5 @@
+const BOOKS_DEFAULT_URL = 'api/books';
+const AUTHORS_DEFAULT_URL = 'api/authors';
 const addBookForm = document.querySelector('#book-form');
 const authorsSelect = document.querySelector('#book-form__author');
 const fileInput = document.querySelector('#book-form__file');
@@ -19,7 +21,7 @@ function sendBook() {
     const book = {};
     const options = {
         method: fileInput.value ? 'POST': 'PATCH',
-        url: '/api/books',
+        url: BOOKS_DEFAULT_URL,
         data: fileInput.value ? formData : book
     };
 
@@ -64,7 +66,7 @@ function addAuthorsToSelect(authors) {
 
 
 (function getAuthors() {
-    axios.get('/api/authors')
+    axios.get(AUTHORS_DEFAULT_URL)
         .then(response => {
             addAuthorsToSelect(response.data);
         })
@@ -76,7 +78,7 @@ function addAuthorsToSelect(authors) {
 if (bookId) {
     const bookId = urlParams.get('id');
 
-    axios.get('/api/books?id=' + bookId)
+    axios.get(`${BOOKS_DEFAULT_URL}?id=${bookId}`)
         .then(response => {
             fillInputsWithBookData(response.data);
         })
