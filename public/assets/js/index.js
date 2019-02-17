@@ -16,7 +16,7 @@ function getTotalBooksCount() {
 }
 
 function getBooksWithLimitAndOffset(limit, offset = 0) {
-    if (books && books[limit] && books[limit][offset]) {
+    if (books[limit] && books[limit][offset]) {
         buildBooksList(books[limit][offset]);
 
         return;
@@ -155,6 +155,7 @@ function deleteBook(event) {
 
 function removeBookFromList(bookId) {
     document.querySelector('#book-' + bookId).remove();
+    books = {};
 }
 
 (function init() {
