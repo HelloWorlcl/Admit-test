@@ -35,9 +35,14 @@ function getBooksWithLimitAndOffset(limit, offset = 0) {
 }
 
 function buildBooksList(books) {
-    mainList.innerHTML = '';
-
+    clearBooksList();
     books.forEach(book => createBookListElement(book));
+}
+
+function clearBooksList() {
+    while (mainList.firstChild) {
+        mainList.firstChild.remove();
+    }
 }
 
 function createBookListElement(book) {
@@ -156,6 +161,7 @@ function deleteBook(event) {
 function removeBookFromList(bookId) {
     document.querySelector('#book-' + bookId).remove();
     books = {};
+    pagination.rebuildPaginationAfterItemDelete();
 }
 
 (function init() {

@@ -11,6 +11,7 @@ class Pagination {
 
     createPagination() {
         const totalButtonsCount = Math.ceil(this.totalCount / this.limit);
+
         for (let i = 0; i < totalButtonsCount; i++) {
             this.addButton(this.createButton(i))
         }
@@ -18,6 +19,7 @@ class Pagination {
 
     createButton(i) {
         const button = document.createElement('button');
+
         button.dataset.index = i;
         button.innerText = i + 1;
         button.className = 'page-link';
@@ -31,5 +33,17 @@ class Pagination {
 
     addButton(button) {
         this.parentNode.appendChild(button);
+    }
+
+    rebuildPaginationAfterItemDelete() {
+        this.clearPagination();
+        this.totalCount--;
+        this.createPagination();
+    }
+
+    clearPagination() {
+        while (this.parentNode.firstChild) {
+            this.parentNode.firstChild.remove();
+        }
     }
 }
