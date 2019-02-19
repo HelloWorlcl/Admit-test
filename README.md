@@ -99,3 +99,9 @@ That's all what you have to set up.
 - Run `composer install`;
 
 That's it. Have fun :)
+
+## Possible problems
+
+- Cannot upload a image.
+    - Seems that your server user doesn't have write access to the `uploads` directory. To fix it run the next command:  
+    `sudo chmod 777 public/uploads/`
