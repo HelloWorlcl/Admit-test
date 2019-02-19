@@ -9,13 +9,13 @@ use App\Repositories\AuthorRepository;
 class AuthorController
 {
     /**
-     * @var AbstractRepository
+     * @var AuthorRepository
      */
     private $repository;
 
-    public function __construct()
+    public function __construct(AbstractRepository $repository)
     {
-        $this->repository = new AuthorRepository();
+        $this->repository = $repository;
     }
 
     /**

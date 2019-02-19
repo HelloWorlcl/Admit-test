@@ -4,10 +4,26 @@ namespace App\Models\Factories;
 
 use App\Models\Author;
 use App\Models\Book;
-use App\Repositories\AuthorRepository;
+use App\Repositories\AbstractRepository;
 
 class BookFactory implements ModelFactory
 {
+    /**
+     * @var AuthorFactory
+     */
+    private $authorFactory;
+
+    /**
+     * @var AbstractRepository
+     */
+    private $authorRepository;
+
+    public function __construct(ModelFactory $factory, AbstractRepository $authorRepository)
+    {
+        $this->authorFactory = $factory;
+        $this->authorRepository = $authorRepository;
+    }
+
     /**
      * @return Book[]|Book
      */
@@ -36,7 +52,7 @@ class BookFactory implements ModelFactory
 
     private function setBookObject(array $bookArray): Book
     {
-        $author = $this->createAuthorFromArray($bookArray['authorId'], $bookArray['authorFullName']);
+        $author = $this->createAuthor($bookArray['authorId'], $bookArray['authorFullName']);
 
         $book = new Book($bookArray['bookName'], $author);
         $book->setId($bookArray['bookId'])
@@ -46,13 +62,15 @@ class BookFactory implements ModelFactory
         return $book;
     }
 
-    private function createAuthorFromArray(int $authorId, string $authorFullName = null): Author
+    private function createAuthor(int $id, ?string $fullName): Author
     {
-        $authorFactory = new AuthorFactory();
+        if (!$fullName) {
+            return $this->authorRepository->findById($id);
+        }
 
-        return $authorFactory->createFromArray([
-            'authorId' => $authorId,
-            'authorFullName' => $authorFullName
+        return $this->authorFactory->createFromArray([
+            'authorId' => $id,
+            'authorFullName' => $fullName
         ]);
     }
 

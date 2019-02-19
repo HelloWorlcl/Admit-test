@@ -29,7 +29,7 @@ class ImageHandler extends FileHandler
         return in_array($this->file['type'], self::ALLOWED_IMAGE_EXTENSIONS);
     }
 
-    private function isAllowedMimeType()
+    private function isAllowedMimeType(): bool
     {
         $imageInfo = getimagesize($this->file['tmp_name']);
 

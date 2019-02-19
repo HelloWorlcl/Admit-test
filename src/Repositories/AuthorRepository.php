@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Kernel\Database\Connection\Connection;
 use App\Models\AbstractModel;
 use App\Models\Author;
 use App\Models\Exceptions\ModelWasNotFoundException;
-use App\Models\Factories\AuthorFactory;
+use App\Models\Factories\ModelFactory;
 
 class AuthorRepository extends AbstractRepository
 {
@@ -14,10 +15,10 @@ class AuthorRepository extends AbstractRepository
      */
     private $factory;
 
-    public function __construct()
+    public function __construct(Connection $connection, ModelFactory $factory)
     {
-        parent::__construct();
-        $this->factory = new AuthorFactory();
+        parent::__construct($connection);
+        $this->factory = $factory;
     }
 
     /**

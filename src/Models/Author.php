@@ -15,6 +15,11 @@ class Author extends AbstractModel implements \JsonSerializable
 
     public function setId(int $id): Author
     {
+        /*
+         * I understand, that we cannot set an id manually,
+         * but it's necessary only for BookFactory
+         * and doesn't impact on the final entity id
+         */
         $this->id = $id;
 
         return $this;
@@ -22,11 +27,6 @@ class Author extends AbstractModel implements \JsonSerializable
 
     public function getId(): int
     {
-        /*
-         * I understand, that we cannot set an id manually,
-         * but it's necessary only for BookFactory
-         * and doesn't impact on the final entity id
-         */
         return $this->id;
     }
 

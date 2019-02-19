@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Kernel\Database\Connection\Connection;
-use App\Kernel\Database\Connection\MySQLConnection;
 use App\Models\AbstractModel;
 
 abstract class AbstractRepository
@@ -13,9 +12,9 @@ abstract class AbstractRepository
      */
     protected $connection;
 
-    public function __construct()
+    public function __construct(Connection $connection)
     {
-        $this->connection = (new MySQLConnection())->getConnection();
+        $this->connection = $connection->getConnection();
     }
 
     protected function getConnection(): \PDO
@@ -25,9 +24,6 @@ abstract class AbstractRepository
 
     abstract public function findAll(): array;
 
-    /**
-     * @return AbstractModel
-     */
     abstract public function findById(int $id);
 
     public function __destruct()

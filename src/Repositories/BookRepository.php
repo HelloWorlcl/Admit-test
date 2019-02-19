@@ -2,12 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Kernel\Database\Connection\Connection;
 use App\Models\Book;
 use App\Models\Exceptions\ModelWasNotDeletedException;
 use App\Models\Exceptions\ModelWasNotFoundException;
 use App\Models\Exceptions\ModelWasNotSavedException;
 use App\Models\Exceptions\ModelWasNotUpdatedException;
 use App\Models\Factories\BookFactory;
+use App\Models\Factories\ModelFactory;
 
 class BookRepository extends AbstractRepository
 {
@@ -19,10 +21,10 @@ class BookRepository extends AbstractRepository
      */
     private $factory;
 
-    public function __construct()
+    public function __construct(Connection $connection, ModelFactory $factory)
     {
-        parent::__construct();
-        $this->factory = new BookFactory();
+        parent::__construct($connection);
+        $this->factory = $factory;
     }
 
     /**

@@ -2,49 +2,32 @@
 
 namespace App\Kernel\Database\Connection;
 
+use App\Kernel\Database\DatabaseConfiguration;
+
 class MySQLConnection implements Connection
 {
     /**
-     * @var string
+     * @var DatabaseConfiguration
      */
-    protected $host;
+    private $configuration;
 
-    /**
-     * @var string
-     */
-    protected $port;
-
-    /**
-     * @var string
-     */
-    protected $dbName;
-
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string|null
-     */
-    protected $password;
-
-    public function __construct()
+    public function __construct(DatabaseConfiguration $configuration)
     {
-        $this->host = getenv('DB_HOST');
-        $this->post = getenv('DB_PORT');
-        $this->dbName = getenv('DB_NAME');
-        $this->username = getenv('DB_USERNAME');
-        $this->password = getenv('DB_PASSWORD');
+        $this->configuration = $configuration;
     }
 
     public function getConnection(): \PDO
     {
-        return new \PDO($this->getDSN(), $this->username, $this->password);
+        return new \PDO($this->getDSN(), $this->configuration->getUsername(), $this->configuration->getPassword());
     }
 
     protected function getDSN(): string
     {
-        return 'mysql:host=' . $this->host . ';port=' . $this->port . ';dbname=' . $this->dbName;
+        return sprintf(
+            'mysql:host=%s;port=%s;dbname=%s',
+            $this->configuration->getHost(),
+            $this->configuration->getPort(),
+            $this->configuration->getDbName()
+        );
     }
 }

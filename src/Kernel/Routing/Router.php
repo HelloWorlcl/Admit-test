@@ -75,22 +75,15 @@ class Router
         return $this;
     }
 
-    /**
-     * @throws RouteIsNotFoundException
-     */
-    public function handle(): void
+    public function getControllerPath(): string
     {
         $path = $this->getRequestPath();
 
         if (array_key_exists($path, $this->routes)) {
-            $controller = new $this->routes[$path];
-            $controllerMethod = $this->getControllerMethod();
-            $controllerArgs = $this->getControllerArgs();
-
-            $this->response = $controller->$controllerMethod($controllerArgs);
-        } else {
-            throw new RouteIsNotFoundException('Route is not found');
+            return $this->routes[$path];
         }
+
+        throw new RouteIsNotFoundException('Route is not found');
     }
 
     private function getRequestPath(): string
@@ -103,9 +96,8 @@ class Router
     /**
      * @throws MethodIsNotAllowedException
      */
-    private function getControllerMethod(): string
+    public function getControllerMethod(): string
     {
-        //TODO: maybe also check if a controller has the method
         switch ($this->requestMethod) {
             case self::HTTP_METHOD_GET:
                 return !empty($this->requestQueryString)
@@ -124,7 +116,7 @@ class Router
         }
     }
 
-    private function getControllerArgs(): array
+    public function getControllerArgs(): array
     {
         switch (true) {
             case $this->isMethodWithQueryString():
@@ -159,6 +151,16 @@ class Router
         }
 
         return $args;
+    }
+
+    /**
+     * @param mixed $response
+     */
+    public function setResponse($response): Router
+    {
+        $this->response = $response;
+
+        return $this;
     }
 
     public function getResponse(): string

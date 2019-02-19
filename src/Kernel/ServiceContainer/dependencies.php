@@ -3,7 +3,7 @@
 return [
     \App\Controllers\BookController::class => [
         \App\Repositories\BookRepository::class,
-        \App\Models\Factories\BookFactory::class
+        \App\Repositories\AuthorRepository::class
     ],
     \App\Controllers\AuthorController::class => [
         \App\Repositories\AuthorRepository::class
@@ -17,6 +17,7 @@ return [
         \App\Models\Factories\AuthorFactory::class
     ],
     \App\Models\Factories\BookFactory::class => [
-        \App\Models\Factories\AuthorFactory::class
+        \App\Models\Factories\AuthorFactory::class,
+        \App\Repositories\AuthorRepository::class
     ]
 ];
