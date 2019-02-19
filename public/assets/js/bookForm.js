@@ -4,50 +4,30 @@ const addBookForm = document.querySelector('#book-form');
 const authorsSelect = document.querySelector('#book-form__author');
 const fileInput = document.querySelector('#book-form__file');
 const urlParams = new URLSearchParams(window.location.search);
-const bookId = urlParams.get('id') || null;
 let bookData = {};
 
-addBookForm.addEventListener('submit', event => {
-    event.preventDefault();
-    sendBook();
-});
+(function init() {
+    const bookId = urlParams.get('id');
 
-fileInput.addEventListener('change', () => {
-    validateFile(fileInput);
-});
+    getAuthors();
 
-function sendBook() {
-    const formData = new FormData(addBookForm);
-    const book = {};
-    const options = {
-        method: fileInput.value ? 'POST': 'PATCH',
-        url: BOOKS_DEFAULT_URL,
-        data: fileInput.value ? formData : book
-    };
-
-    if (fileInput.value) {
-        options.headers = { 'content-type': 'application/x-www-form-urlencoded' };
-
-        if (bookId) {
-            formData.append('bookId', bookId);
-            formData.append('_method', 'PATCH');
-        }
-    } else {
-        for (const [key, value] of formData.entries()) {
-            book[key] = value;
-        }
-
-        if (bookId) {
-            book.bookId = bookId;
-            book.bookPicturePath = bookData.picturePath
-        }
+    if (bookId) {
+        getBook(bookId);
     }
 
-    axios(options)
+    addBookForm.addEventListener('submit', event => {
+        event.preventDefault();
+        sendBook(bookId);
+    });
+    fileInput.addEventListener('change', () => {
+        validateFile(fileInput);
+    });
+})();
+
+function getAuthors() {
+    axios.get(AUTHORS_DEFAULT_URL)
         .then(response => {
-            if (response.status === 200) {
-                window.location.replace('/');
-            }
+            addAuthorsToSelect(response.data);
         })
         .catch(error => {
             console.error(error);
@@ -64,20 +44,7 @@ function addAuthorsToSelect(authors) {
     });
 }
 
-
-(function getAuthors() {
-    axios.get(AUTHORS_DEFAULT_URL)
-        .then(response => {
-            addAuthorsToSelect(response.data);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-})();
-
-if (bookId) {
-    const bookId = urlParams.get('id');
-
+function getBook(bookId) {
     axios.get(`${BOOKS_DEFAULT_URL}?id=${bookId}`)
         .then(response => {
             fillInputsWithBookData(response.data);
@@ -93,18 +60,74 @@ function fillInputsWithBookData(book) {
     document.querySelector('#book-form__description').value = book.description;
 
     if (book.picturePath) {
-        const fileInput = document.querySelector('#book-form__file');
-        const imageTitle = document.createElement('h6');
-        const image = document.createElement('img');
-
-        imageTitle.innerText = 'Current image: ' + book.picturePath.split('/')[1];
-
-        image.className = 'img-fluid';
-        image.src = book.picturePath;
-
-        fileInput.parentNode.insertBefore(imageTitle, fileInput.nextSibling);
-        imageTitle.parentNode.insertBefore(image, imageTitle.nextSibling);
+        insertCurrentPicture(book.picturePath);
     }
 
-    bookData = book;
+    bookData = { ...book };
+}
+
+function insertCurrentPicture(picturePath) {
+    const fileInput = document.querySelector('#book-form__file');
+    const imageTitle = document.createElement('h6');
+    const image = document.createElement('img');
+
+    imageTitle.innerText = 'Current image: ' + picturePath.split('/')[1];
+    image.className = 'img-fluid';
+    image.src = picturePath;
+
+    fileInput.parentNode.insertBefore(imageTitle, fileInput.nextSibling);
+    imageTitle.parentNode.insertBefore(image, imageTitle.nextSibling);
+}
+
+function sendBook(bookId) {
+    const formData = new FormData(addBookForm);
+    const options = createRequestOptions(formData, bookId);
+
+    axios(options)
+        .then(response => {
+            if (response.status === 200) {
+                window.location.replace('/');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+function createRequestOptions(formData, bookId) {
+    const options = {
+        url: BOOKS_DEFAULT_URL,
+    };
+    let method = 'POST';
+    let data = null;
+
+    if (fileInput.value) {
+        options.headers = { 'content-type': 'application/form-data' };
+
+        if (bookId) {
+            formData.append('id', bookId);
+            formData.append('_method', 'PUT');
+        }
+
+        data = formData;
+    } else {
+        const book = {};
+
+        for (const [key, value] of formData.entries()) {
+            book[key] = value;
+        }
+
+        if (bookId) {
+            book.id = bookId;
+            book.bookPicturePath = bookData.picturePath;
+            method = 'PUT';
+        }
+
+        data = { ...book };
+    }
+
+    options.method = method;
+    options.data = data;
+
+    return options;
 }
