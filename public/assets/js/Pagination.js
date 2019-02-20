@@ -10,10 +10,12 @@ class Pagination {
     }
 
     createPagination() {
-        const totalButtonsCount = Math.ceil(this.totalCount / this.limit);
+        if (this.totalCount > 0) {
+            const totalButtonsCount = Math.ceil(this.totalCount / this.limit);
 
-        for (let i = 0; i < totalButtonsCount; i++) {
-            this.addButton(this.createButton(i))
+            for (let i = 0; i < totalButtonsCount; i++) {
+                this.addButton(this.createButton(i))
+            }
         }
     }
 

@@ -33,7 +33,9 @@ class BookFactory implements ModelFactory
             return $this->createMultipleFromArrays($booksAsArray);
         }
 
-        return $this->createSingleFromArray($booksAsArray);
+        return count($booksAsArray) > 0
+            ? $this->createSingleFromArray($booksAsArray)
+            : $booksAsArray;
     }
 
     /**
