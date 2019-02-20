@@ -108,6 +108,6 @@ That's it. Have fun :)
     
 ## P.S
 
-I don't use different useful php-libraries (e.g php-di, routing, doctrine etc) either front-end libraries,
-or docker because the requirement is to not use frameworks, use nginx and mysql and I decided to create a pure system and implement 
+I don't use different useful php-libraries (e.g. php-di, routing, doctrine etc) either front-end libraries
+or docker because the requirement is to not use frameworks, only use nginx and mysql and I decided to create a pure system and implement 
 simple functionality of it by my own.
