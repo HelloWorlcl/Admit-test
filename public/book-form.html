@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book CRUD</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h1>Add a new book</h1>
+    <form id="book-form">
+        <div class="form-group">
+            <label for="book-form__name">
+                Name
+                <span class="mandatory-mark">*</span>
+            </label>
+            <input
+                type="text"
+                id="book-form__name"
+                class="form-control"
+                maxlength="100"
+                name="bookName"
+                placeholder="Book name"
+                required
+            />
+        </div>
+        <div class="form-group">
+            <label for="book-form__author">
+                Author
+                <span class="mandatory-mark">*</span>
+            </label>
+            <select id="book-form__author" class="form-control" name="authorId" required>
+                <option value="" disabled selected>Select an author</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="book-form__description">Description</label>
+            <textarea
+                id="book-form__description"
+                class="form-control"
+                name="bookDescription"
+                maxlength="100"
+                placeholder="Book description"
+            ></textarea>
+        </div>
+        <div class="form-group">
+            <label for="book-form__file">Image</label>
+            <input
+                type="file"
+                id="book-form__file"
+                class="form-control-file"
+                name="bookFile"
+            />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="assets/js/bookForm.js"></script>
+<script src="assets/js/formValidator.js"></script>
+</body>
+</html>
