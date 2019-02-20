@@ -105,3 +105,9 @@ That's it. Have fun :)
 - Cannot upload a image.
     - Seems that your server user doesn't have write access to the `uploads` directory. To fix it run the next command:  
     `sudo chmod 777 public/uploads/`
+    
+## P.S
+
+I don't use different useful php-libraries (e.g php-di, routing, doctrine etc) either front-end libraries,
+or docker because the requirement is to not use frameworks, use nginx and mysql and I decided to create a pure system and implement 
+simple functionality of it by my own.
